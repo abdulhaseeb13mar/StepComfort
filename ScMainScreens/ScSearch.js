@@ -1,12 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
-} from 'react-native';
+import {View, Text, TouchableOpacity, TextInput} from 'react-native';
 import WrapperScreen from '../ScFrequentUsage/ScWrapperScreen';
 import {H_W} from '../ScFrequentUsage/ScResponsive';
 import NavigationRef from '../ScFrequentUsage/ScRefNavigation';
@@ -20,9 +14,7 @@ import {
   ScremoveFavAction,
 } from '../ScStateManagement/ScActions';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import ScSearchBar from '../ScFrequentUsage/ScSearchBar';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import ScHeader from '../ScFrequentUsage/ScHeader';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import LinearGradient from 'react-native-linear-gradient';
 import {ScHorizontalTile} from './ScHome';
@@ -150,7 +142,6 @@ function Search(props) {
           marginTop: HEIGHT * 0.045,
         }}>
         <TouchableOpacity
-          // onPress={ScGotoSearch}
           style={{
             shadowColor: '#bcbcbc',
             shadowOffset: {
@@ -218,20 +209,3 @@ export default connect(mapStateToProps, {
   ScsetFavAction,
   ScremoveFavAction,
 })(Search);
-
-const styles = StyleSheet.create({
-  ScSearch2: {
-    fontWeight: 'bold',
-    fontSize: 20,
-    color: colors.primary,
-  },
-  ScSearch3: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  ScSearch4: {
-    width: '85%',
-  },
-  ScSearch5: {},
-  ScSearch6: {},
-});

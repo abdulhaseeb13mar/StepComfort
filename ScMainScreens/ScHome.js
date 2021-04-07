@@ -30,7 +30,6 @@ function ScHome(props) {
   const [ScCategories, setScCategories] = useState(Data.category);
   const [ScCurrentCat, setScCurrentCat] = useState(Data.category[0]);
   const [ScTabProducts, setScTabProducts] = useState([]);
-  // const [popularProducts, setPopularProducts] = useState(Data.Popular);
 
   const ScchangeTab = (tab) => {
     setScCurrentCat(tab);
@@ -362,6 +361,10 @@ export const ScHorizontalTile = ({
   ScremoveFav,
   ScsetFav,
   ScFavs,
+  isCart,
+  ScRemoveFromCart,
+  ScAddToCart,
+  ScCart,
 }) => {
   useEffect(() => {
     checkIfFav();
@@ -382,6 +385,7 @@ export const ScHorizontalTile = ({
     fav ? ScremoveFav(item.id) : ScsetFav(item);
     setFav(!fav);
   };
+
   return (
     <TouchableOpacity
       onPress={() => ScGoToSingleProduct(item)}
@@ -400,7 +404,7 @@ export const ScHorizontalTile = ({
             height: H_W.width * 0.25,
             borderRadius: 13,
             padding: 2,
-            shadowColor: '#000',
+            shadowColor: isCart ? item.color : '#000',
             shadowOffset: {
               width: 5,
               height: 8,
@@ -451,10 +455,11 @@ export const ScHorizontalTile = ({
             <View
               style={{
                 alignItems: 'center',
-                justifyContent: 'center',
+                justifyContent: 'space-between',
                 flexDirection: 'row',
                 alignSelf: 'flex-start',
                 marginTop: HEIGHT * 0.015,
+                width: '60%',
               }}>
               <Text
                 style={{
@@ -465,50 +470,87 @@ export const ScHorizontalTile = ({
                 }}>
                 ${item.price}
               </Text>
+              {isCart && (
+                <Text
+                  style={{
+                    fontWeight: 'bold',
+                    fontSize: 17.5,
+                    color: colors.lightGrey3,
+                  }}>
+                  {item.size}
+                </Text>
+              )}
             </View>
           </View>
-          <TouchableOpacity onPress={toggleFav}>
-            <MaskedViewIOS
-              maskElement={
-                <AntDesign
-                  name="heart"
-                  size={H_W.width * 0.07}
-                  style={{
-                    shadowColor: '#000',
-                    shadowOffset: {
-                      width: 0,
-                      height: 8,
-                    },
-                    shadowOpacity: 0.3,
-                    shadowRadius: 10.32,
-                  }}
-                />
-              }>
-              <LinearGradient
-                colors={
-                  fav
-                    ? [colors.primary, `rgba(${colors.rgb_Primary}, 0.4)`]
-                    : [colors.lightGrey3, colors.lightGrey2]
-                }
-                start={{x: 0, y: 0}}
-                end={{x: 1, y: 1}}>
-                <AntDesign
-                  name="heart"
-                  size={H_W.width * 0.07}
-                  style={{
-                    opacity: 0,
-                    shadowColor: '#000',
-                    shadowOffset: {
-                      width: 0,
-                      height: 8,
-                    },
-                    shadowOpacity: 0.3,
-                    shadowRadius: 10.32,
-                  }}
-                />
-              </LinearGradient>
-            </MaskedViewIOS>
-          </TouchableOpacity>
+          {isCart ? (
+            <View
+              style={{
+                alignItems: 'center',
+                justifyContent: 'space-evenly',
+                borderColor: colors.lightGrey3,
+                borderWidth: 1,
+                borderRadius: 5,
+              }}>
+              <TouchableOpacity
+                style={{padding: 3}}
+                onPress={() => ScRemoveFromCart(item)}>
+                <Entypo name="minus" size={20} />
+              </TouchableOpacity>
+              <Text style={{fontSize: 17}}>
+                {ScCart[`${item.id}_${item.color}_${item.size}`] !==
+                  undefined &&
+                  ScCart[`${item.id}_${item.color}_${item.size}`].added}
+              </Text>
+              <TouchableOpacity
+                style={{padding: 3}}
+                onPress={() => ScAddToCart(item)}>
+                <Entypo name="plus" size={20} />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <TouchableOpacity onPress={toggleFav}>
+              <MaskedViewIOS
+                maskElement={
+                  <AntDesign
+                    name="heart"
+                    size={H_W.width * 0.07}
+                    style={{
+                      shadowColor: '#000',
+                      shadowOffset: {
+                        width: 0,
+                        height: 8,
+                      },
+                      shadowOpacity: 0.3,
+                      shadowRadius: 10.32,
+                    }}
+                  />
+                }>
+                <LinearGradient
+                  colors={
+                    fav
+                      ? [colors.primary, `rgba(${colors.rgb_Primary}, 0.4)`]
+                      : [colors.lightGrey3, colors.lightGrey2]
+                  }
+                  start={{x: 0, y: 0}}
+                  end={{x: 1, y: 1}}>
+                  <AntDesign
+                    name="heart"
+                    size={H_W.width * 0.07}
+                    style={{
+                      opacity: 0,
+                      shadowColor: '#000',
+                      shadowOffset: {
+                        width: 0,
+                        height: 8,
+                      },
+                      shadowOpacity: 0.3,
+                      shadowRadius: 10.32,
+                    }}
+                  />
+                </LinearGradient>
+              </MaskedViewIOS>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </TouchableOpacity>
@@ -553,7 +595,6 @@ export const TabList = ({item, ScchangeTab, ScCurrentCat}) => {
     </TouchableOpacity>
   );
 };
-
 const mapStateToProps = (state) => {
   return {
     SctotalItems: state.ScCartReducer.totalItems,

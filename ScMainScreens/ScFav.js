@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {connect} from 'react-redux';
-import {Text, View, StyleSheet, TouchableOpacity} from 'react-native';
+import {Text, View, TouchableOpacity} from 'react-native';
 import {
   ScremoveFavAction,
   ScsetFavAction,
@@ -143,17 +143,3 @@ export default connect(mapStateToProps, {
   ScsetCurrentProductAction,
   ScremoveFavAction,
 })(ScFavourites);
-
-const styles = StyleSheet.create({
-  ScFav1: {
-    backgroundColor: colors.primary,
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
-  },
-  ScFav2: {
-    color: colors.primary,
-    fontSize: 22,
-  },
-  ScFav3: {},
-  ScFav4: {},
-});

@@ -263,8 +263,9 @@ function SingleProduct(props) {
             <Text style={{marginRight: H_W.width * 0.02, fontSize: 17.5}}>
               Color
             </Text>
-            {availableColors.map((item) => (
+            {availableColors.map((item, index) => (
               <TouchableOpacity
+                key={index}
                 onPress={() => setCurrColor(item)}
                 style={{
                   marginHorizontal: H_W.width * 0.02,
@@ -311,8 +312,9 @@ function SingleProduct(props) {
             <Text style={{marginRight: H_W.width * 0.02, fontSize: 17.5}}>
               Size
             </Text>
-            {availableSizes.map((item) => (
+            {availableSizes.map((item, index) => (
               <TouchableOpacity
+                key={index}
                 onPress={() => setCurrSize(item)}
                 style={{
                   shadowColor: '#bcbcbc',
@@ -456,11 +458,6 @@ function SingleProduct(props) {
     </WrapperScreen>
   );
 }
-
-const border = {
-  borderWidth: 1,
-  borderColor: 'red',
-};
 
 const mapStateToProps = (state) => {
   return {

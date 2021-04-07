@@ -1,13 +1,18 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
-import {Text, View, StyleSheet, TextInput, ScrollView} from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+} from 'react-native';
 import {connect} from 'react-redux';
 import WrapperScreen from '../ScFrequentUsage/ScWrapperScreen';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {H_W} from '../ScFrequentUsage/ScResponsive';
 import {colors} from '../ScFrequentUsage/ScColor';
 import {Button, Overlay} from 'react-native-elements';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {isFormValid} from '../ScFrequentUsage/Scvalidation';
 import NavPointer from '../ScFrequentUsage/ScRefNavigation';
@@ -17,17 +22,21 @@ import {
   ScsetCurrentProductAction,
   ScsetFavAction,
   ScremoveFavAction,
+  ScaddCartAction,
+  ScremoveCartAction,
 } from '../ScStateManagement/ScActions';
 import Toast from 'react-native-root-toast';
 import Loop from '../ScFrequentUsage/ScFlatList';
 import RefNavigation from '../ScFrequentUsage/ScRefNavigation';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import {ScHorizontalTile} from './ScHome';
+import LinearGradient from 'react-native-linear-gradient';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const ConfirmOrder = (props) => {
   useEffect(() => {
     convertObjectToArray();
-  }, []);
+  }, [props.ScCart]);
 
   const insets = useSafeAreaInsets();
   const HEIGHT = H_W.height - (insets.bottom + insets.top);
@@ -91,7 +100,7 @@ const ConfirmOrder = (props) => {
             address: address,
             phonenumber: phone,
             email: email,
-            appname: 'BountiFul Bags',
+            appname: 'Step Comfort',
           }),
         },
       );
@@ -149,11 +158,81 @@ const ConfirmOrder = (props) => {
     RefNavigation.Navigate('ScSP');
   };
 
+  const ScAddToCart = (item) => {
+    props.ScaddCartAction({...item});
+  };
+
+  const ScRemoveFromCart = (item) => {
+    props.ScCart[`${item.id}_${item.color}_${item.size}`] !== undefined &&
+      props.ScremoveCartAction({...item});
+  };
+
   return (
     <WrapperScreen style={{backgroundColor: 'white'}}>
-      <ScrollView style={styles.container} bounces={false}>
+      <KeyboardAwareScrollView style={styles.container} bounces={false}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            paddingHorizontal: H_W.width * 0.05,
+            marginTop: HEIGHT * 0.01,
+          }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <TouchableOpacity
+              onPress={ScGoBack}
+              style={{
+                shadowColor: '#bcbcbc',
+                shadowOffset: {
+                  width: 5,
+                  height: 8,
+                },
+                shadowOpacity: 0.56,
+                shadowRadius: 8.68,
+              }}>
+              <LinearGradient
+                style={{padding: 2, borderRadius: 10}}
+                colors={['white', colors.lightGrey3]}
+                locations={[0.3, 1]}
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 1}}>
+                <LinearGradient
+                  style={{padding: 5, borderRadius: 10}}
+                  colors={['white', colors.lightBackground]}
+                  start={{x: 0, y: 1}}
+                  end={{x: 1, y: 0}}>
+                  <Ionicons
+                    name="arrow-back-outline"
+                    size={23}
+                    color={colors.lightGrey3}
+                  />
+                </LinearGradient>
+              </LinearGradient>
+            </TouchableOpacity>
+            <Text
+              style={{
+                marginLeft: H_W.width * 0.02,
+                color: colors.darkGray,
+              }}>
+              Back
+            </Text>
+          </View>
+        </View>
+        <Text
+          style={{
+            marginLeft: H_W.width * 0.03,
+            fontSize: 23,
+            marginTop: HEIGHT * 0.04,
+          }}>
+          Order Details
+        </Text>
         <Loop
-          style={{marginVertical: HEIGHT * 0.02}}
+          style={{marginBottom: HEIGHT * 0.02}}
           data={HorizontalCartArray}
           renderItem={({item}) => (
             <View
@@ -164,14 +243,46 @@ const ConfirmOrder = (props) => {
               }}>
               <ScHorizontalTile
                 item={item}
+                isCart={true}
                 ScFavs={props.ScFavs}
                 ScGoToSingleProduct={ScGoToSingleProduct}
                 ScsetFav={(sc) => props.ScsetFavAction(sc)}
                 ScremoveFav={(sc) => props.ScremoveFavAction(sc)}
+                ScAddToCart={ScAddToCart}
+                ScRemoveFromCart={ScRemoveFromCart}
+                ScCart={props.ScCart}
               />
             </View>
           )}
         />
+        <View style={{paddingHorizontal: H_W.width * 0.03}}>
+          <View style={{...styles.details, marginVertical: HEIGHT * 0.01}}>
+            <Text style={{color: colors.lightGrey3}}>Qty</Text>
+            <Text style={{fontSize: 18}}>{props.totalItems}</Text>
+          </View>
+          <View style={{...styles.details, marginVertical: HEIGHT * 0.01}}>
+            <Text style={{color: colors.lightGrey3}}>Subtotal</Text>
+            <Text style={{fontSize: 18}}>${props.total}</Text>
+          </View>
+          <View style={{...styles.details, marginVertical: HEIGHT * 0.01}}>
+            <Text style={{color: colors.lightGrey3}}>Delivery</Text>
+            <Text style={{fontSize: 18, color: 'lightgreen'}}>Free</Text>
+          </View>
+          <View style={{...styles.details, marginVertical: HEIGHT * 0.01}}>
+            <Text style={{color: 'black'}}>Total Amount</Text>
+            <Text style={{fontSize: 21, fontWeight: 'bold'}}>
+              ${props.total}
+            </Text>
+          </View>
+        </View>
+        <Text
+          style={{
+            marginLeft: H_W.width * 0.03,
+            fontSize: 23,
+            marginTop: HEIGHT * 0.04,
+          }}>
+          Contact Information
+        </Text>
         <View style={styles.ScPersonalInfoWrapper}>
           <View style={styles.ScSinglePersonalInfoWrapper}>
             <Text
@@ -254,7 +365,7 @@ const ConfirmOrder = (props) => {
               paddingVertical: HEIGHT * 0.04,
             }}>
             <MaterialCommunityIcons
-              name="bag-personal"
+              name="shoe-formal"
               size={H_W.width * 0.25}
               color="white"
             />
@@ -273,7 +384,7 @@ const ConfirmOrder = (props) => {
             raised
             loading={loading}
             onPress={ScConfirm}
-            disabled={props.ScTotalItems === 0}
+            disabled={props.totalItems === 0}
             title="CONFIRM ORDER"
             titleStyle={{fontWeight: 'bold', fontSize: 20}}
             containerStyle={{width: '100%', borderRadius: 50}}
@@ -291,7 +402,7 @@ const ConfirmOrder = (props) => {
             }}
           />
         </View>
-      </ScrollView>
+      </KeyboardAwareScrollView>
     </WrapperScreen>
   );
 };
@@ -300,6 +411,7 @@ const mapStateToProps = (state) => {
   return {
     ScCart: state.ScCartReducer.items,
     total: state.ScCartReducer.totalAmount,
+    totalItems: state.ScCartReducer.totalItems,
     ScFavs: state.ScToggleFav,
   };
 };
@@ -313,9 +425,16 @@ export default connect(mapStateToProps, {
   ScsetCurrentProductAction,
   ScsetFavAction,
   ScremoveFavAction,
+  ScaddCartAction,
+  ScremoveCartAction,
 })(React.memo(ConfirmOrder));
 
 const styles = StyleSheet.create({
+  details: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   ScContact2: {
     color: colors.primary,
     fontSize: 22,
@@ -353,9 +472,16 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     backgroundColor: colors.lightGrey4,
     paddingHorizontal: H_W.width * 0.02,
-    borderRadius: 1,
+    borderRadius: 10,
     borderColor: colors.primary,
     borderWidth: 1.5,
+    shadowColor: '#bcbcbc',
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.46,
+    shadowRadius: 6.68,
   },
   ScPersonalInfoHeadingName: {
     fontSize: 13,
