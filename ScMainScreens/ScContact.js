@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useState} from 'react';
-import {Text, View, StyleSheet, TextInput} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {Text, View, StyleSheet, TextInput, ScrollView} from 'react-native';
 import {connect} from 'react-redux';
 import WrapperScreen from '../ScFrequentUsage/ScWrapperScreen';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
@@ -11,12 +11,24 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {isFormValid} from '../ScFrequentUsage/Scvalidation';
 import NavPointer from '../ScFrequentUsage/ScRefNavigation';
-import {ScUserAction, ScresetCart} from '../ScStateManagement/ScActions';
+import {
+  ScUserAction,
+  ScresetCart,
+  ScsetCurrentProductAction,
+  ScsetFavAction,
+  ScremoveFavAction,
+} from '../ScStateManagement/ScActions';
 import Toast from 'react-native-root-toast';
-import UseHeader from '../ScFrequentUsage/ScHeader';
+import Loop from '../ScFrequentUsage/ScFlatList';
+import RefNavigation from '../ScFrequentUsage/ScRefNavigation';
+import {ScHorizontalTile} from './ScHome';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const ConfirmOrder = (props) => {
+  useEffect(() => {
+    convertObjectToArray();
+  }, []);
+
   const insets = useSafeAreaInsets();
   const HEIGHT = H_W.height - (insets.bottom + insets.top);
   const [firstNameErrMsg, setFirstNameErrMsg] = useState('');
@@ -29,6 +41,16 @@ const ConfirmOrder = (props) => {
   const [phoneErrMsg, setPhoneErrMsg] = useState('');
   const [addressErrMsg, setAddressErrMsg] = useState('');
   const [phone, setPhone] = useState('');
+  const [HorizontalCartArray, setHorizontalCartArray] = useState([]);
+
+  const convertObjectToArray = () => {
+    const CartArray = Object.keys(props.ScCart);
+    let UsArr = [];
+    CartArray.forEach((element) => {
+      UsArr.push(props.ScCart[element]);
+    });
+    setHorizontalCartArray(UsArr);
+  };
 
   const ScConfirm = () => {
     const formValidResponse = isFormValid(firstName, email, phone, address);
@@ -122,15 +144,33 @@ const ConfirmOrder = (props) => {
   const ScGoBack = () => NavPointer.GoBack();
   const changeFirstName = (t) => setFirstName(t);
 
+  const ScGoToSingleProduct = (item) => {
+    props.ScsetCurrentProductAction(item);
+    RefNavigation.Navigate('ScSP');
+  };
+
   return (
     <WrapperScreen style={{backgroundColor: 'white'}}>
-      <KeyboardAwareScrollView style={styles.container} bounces={false}>
-        <UseHeader
-          leftIcon={AntDesign}
-          leftIconName="arrowleft"
-          leftIconColor={colors.primary}
-          leftIconAction={ScGoBack}
-          Title={<Text style={styles.ScContact2}>Information</Text>}
+      <ScrollView style={styles.container} bounces={false}>
+        <Loop
+          style={{marginVertical: HEIGHT * 0.02}}
+          data={HorizontalCartArray}
+          renderItem={({item}) => (
+            <View
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: H_W.width * 1,
+              }}>
+              <ScHorizontalTile
+                item={item}
+                ScFavs={props.ScFavs}
+                ScGoToSingleProduct={ScGoToSingleProduct}
+                ScsetFav={(sc) => props.ScsetFavAction(sc)}
+                ScremoveFav={(sc) => props.ScremoveFavAction(sc)}
+              />
+            </View>
+          )}
         />
         <View style={styles.ScPersonalInfoWrapper}>
           <View style={styles.ScSinglePersonalInfoWrapper}>
@@ -251,20 +291,29 @@ const ConfirmOrder = (props) => {
             }}
           />
         </View>
-      </KeyboardAwareScrollView>
+      </ScrollView>
     </WrapperScreen>
   );
 };
 
 const mapStateToProps = (state) => {
   return {
+    ScCart: state.ScCartReducer.items,
     total: state.ScCartReducer.totalAmount,
+    ScFavs: state.ScToggleFav,
   };
 };
-
-export default connect(mapStateToProps, {ScUserAction, ScresetCart})(
-  React.memo(ConfirmOrder),
-);
+const border = {
+  borderWidth: 1,
+  borderColor: 'red',
+};
+export default connect(mapStateToProps, {
+  ScUserAction,
+  ScresetCart,
+  ScsetCurrentProductAction,
+  ScsetFavAction,
+  ScremoveFavAction,
+})(React.memo(ConfirmOrder));
 
 const styles = StyleSheet.create({
   ScContact2: {

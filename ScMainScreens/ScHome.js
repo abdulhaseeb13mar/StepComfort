@@ -14,34 +14,34 @@ import {
   ScremoveFavAction,
   ScsetFavAction,
 } from '../ScStateManagement/ScActions';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FastImage from 'react-native-fast-image';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import ScHeader from '../ScFrequentUsage/ScHeader';
+import LinearGradient from 'react-native-linear-gradient';
+import MaskedViewIOS from '@react-native-community/masked-view';
+import {Badge} from 'react-native-elements';
 
 function ScHome(props) {
   useEffect(() => {
-    ScchangeTab(Data.Category[0]);
+    ScchangeTab(Data.category[0]);
   }, []);
   const insets = useSafeAreaInsets();
   const HEIGHT = H_W.height - (insets.bottom + insets.top);
-  const [Sccategories, setSccategories] = useState(Data.Category);
-  const [SccurrentCat, setScCurrentCat] = useState(Data.Category[0]);
-  const [SctabProducts, setScTabProducts] = useState([]);
-  const [popularProducts, setPopularProducts] = useState(Data.Popular);
+  const [ScCategories, setScCategories] = useState(Data.category);
+  const [ScCurrentCat, setScCurrentCat] = useState(Data.category[0]);
+  const [ScTabProducts, setScTabProducts] = useState([]);
+  // const [popularProducts, setPopularProducts] = useState(Data.Popular);
 
   const ScchangeTab = (tab) => {
     setScCurrentCat(tab);
-    const filteredProducts = Data.Product.filter(
+    const filteredProducts = Data.product.filter(
       (item) => item.categoryid === tab.id,
     );
     setScTabProducts(filteredProducts);
   };
 
   const ScGotoFav = () => RefNavigation.Navigate('ScFav');
-  const ScGotoCart = () => RefNavigation.Navigate('ScCart');
+  const ScGotoCart = () => RefNavigation.Navigate('ScContact');
   const ScGotoSearch = () => RefNavigation.Navigate('ScSearch');
   const ScGoToSingleProduct = (item) => {
     props.ScsetCurrentProductAction(item);
@@ -50,117 +50,198 @@ function ScHome(props) {
 
   return (
     <WrapperScreen style={{backgroundColor: 'white'}}>
-      <View
-        style={{
-          width: 100,
-          height: 100,
-          borderRadius: 50,
-          backgroundColor: 'rgba(188,188,188,0.15)',
-          transform: [{scaleX: H_W.width * 0.016}, {scaleY: H_W.width * 0.017}],
-          position: 'absolute',
-          top: 0,
-        }}
-      />
-      <ScrollView style={{marginTop: 10}} bounces={false}>
-        <ScHeader
-          leftIcon={Ionicons}
-          leftIconName="ios-heart-circle"
-          leftIconColor={colors.primary}
-          leftIconAction={ScGotoFav}
-          rightIconColor="black"
-          rightIcon={MaterialCommunityIcons}
-          rightIconName="cart-outline"
-          rightIconAction={ScGotoCart}
-          Title=""
-        />
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginHorizontal: H_W.width * 0.06,
-            marginBottom: HEIGHT * 0.02,
-            marginTop: HEIGHT * 0.02,
-          }}>
-          <View>
-            <Text style={{fontSize: 24}}>Our</Text>
+      <Loop
+        ListHeaderComponent={
+          <ScrollView bounces={false}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                paddingHorizontal: H_W.width * 0.05,
+                marginTop: HEIGHT * 0.01,
+              }}>
+              <TouchableOpacity onPress={ScGotoFav}>
+                <MaskedViewIOS
+                  maskElement={
+                    <AntDesign
+                      name="heart"
+                      size={H_W.width * 0.07}
+                      style={{
+                        shadowColor: '#000',
+                        shadowOffset: {
+                          width: 0,
+                          height: 8,
+                        },
+                        shadowOpacity: 0.3,
+                        shadowRadius: 10.32,
+                      }}
+                    />
+                  }>
+                  <LinearGradient
+                    colors={[colors.darkGray, colors.lightBackground2]}
+                    start={{x: 0, y: 0}}
+                    end={{x: 1, y: 1}}>
+                    <AntDesign
+                      name="heart"
+                      size={H_W.width * 0.07}
+                      style={{
+                        opacity: 0,
+                        shadowColor: '#000',
+                        shadowOffset: {
+                          width: 0,
+                          height: 8,
+                        },
+                        shadowOpacity: 0.3,
+                        shadowRadius: 10.32,
+                      }}
+                    />
+                  </LinearGradient>
+                </MaskedViewIOS>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={ScGotoCart}>
+                <MaskedViewIOS
+                  maskElement={
+                    <Entypo
+                      name="shopping-bag"
+                      size={H_W.width * 0.07}
+                      style={{
+                        shadowColor: '#000',
+                        shadowOffset: {
+                          width: 0,
+                          height: 8,
+                        },
+                        shadowOpacity: 0.3,
+                        shadowRadius: 10.32,
+                      }}
+                    />
+                  }>
+                  <LinearGradient
+                    colors={[colors.darkGray, colors.lightBackground2]}
+                    start={{x: 0, y: 0}}
+                    end={{x: 1, y: 1}}>
+                    <Entypo
+                      name="shopping-bag"
+                      size={H_W.width * 0.07}
+                      style={{
+                        opacity: 0,
+                        shadowColor: '#000',
+                        shadowOffset: {
+                          width: 0,
+                          height: 8,
+                        },
+                        shadowOpacity: 0.3,
+                        shadowRadius: 10.32,
+                      }}
+                    />
+                  </LinearGradient>
+                </MaskedViewIOS>
+                {props.SctotalItems > 0 && (
+                  <Badge
+                    value={props.SctotalItems}
+                    containerStyle={{position: 'absolute', bottom: 0, right: 0}}
+                    badgeStyle={{backgroundColor: 'red'}}
+                  />
+                )}
+              </TouchableOpacity>
+            </View>
+            <View
+              style={{
+                alignItems: 'center',
+                marginTop: HEIGHT * 0.045,
+              }}>
+              <TouchableOpacity
+                onPress={ScGotoSearch}
+                style={{
+                  shadowColor: '#bcbcbc',
+                  shadowOffset: {
+                    width: 0,
+                    height: 15,
+                  },
+                  shadowOpacity: 0.44,
+                  shadowRadius: 10.32,
+                }}>
+                <LinearGradient
+                  style={{
+                    width: H_W.width * 0.8,
+                    borderRadius: 15,
+                    padding: 2,
+                  }}
+                  colors={['white', colors.lightGrey1]}
+                  start={{x: 0, y: 0}}
+                  end={{x: 1, y: 0}}>
+                  <LinearGradient
+                    colors={['white', colors.lightBackground]}
+                    style={{
+                      backgroundColor: 'white',
+                      borderRadius: 15,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      paddingVertical: HEIGHT * 0.01,
+                      paddingHorizontal: H_W.width * 0.02,
+                    }}>
+                    <Text style={{color: colors.darkGray}}>
+                      Find your Favourite Shoes
+                    </Text>
+                    <LinearGradient
+                      colors={[
+                        colors.primary,
+                        `rgba(${colors.rgb_Primary},0.7)`,
+                      ]}
+                      end={{x: 1, y: 0}}
+                      start={{x: 0, y: 1}}
+                      style={{padding: 7, borderRadius: 7}}>
+                      <AntDesign name="search1" size={14} color="white" />
+                    </LinearGradient>
+                  </LinearGradient>
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
+            <Loop
+              data={ScCategories}
+              renderItem={({item}) => (
+                <TabList
+                  item={item}
+                  ScCurrentCat={ScCurrentCat}
+                  ScchangeTab={ScchangeTab}
+                />
+              )}
+            />
+            <Loop
+              data={ScTabProducts}
+              renderItem={({item}) => (
+                <ScVerticalTile
+                  item={item}
+                  ScGoToSingleProduct={ScGoToSingleProduct}
+                  ScFavs={props.ScFavs}
+                  ScsetFav={(sc) => props.ScsetFavAction(sc)}
+                  ScremoveFav={(sc) => props.ScremoveFavAction(sc)}
+                />
+              )}
+            />
             <Text
               style={{
-                fontWeight: 'bold',
-                fontSize: 24,
+                fontSize: 22,
+                marginLeft: H_W.width * 0.045,
+                marginVertical: HEIGHT * 0.01,
               }}>
-              Products
+              <Text style={{fontWeight: 'bold'}}>Popular </Text>Shoes
             </Text>
-          </View>
-          <TouchableOpacity
-            onPress={ScGotoSearch}
-            style={{
-              padding: 8,
-              backgroundColor: 'white',
-              borderRadius: 50,
-              shadowColor: '#000',
-              shadowOffset: {
-                width: 0,
-                height: 2,
-              },
-              shadowOpacity: 0.23,
-              shadowRadius: 2.62,
-            }}>
-            <Ionicons
-              name="md-search"
-              size={20}
-              color={colors.darkGray}
-              style={{}}
-            />
-          </TouchableOpacity>
-        </View>
-        <Loop
-          style={{marginBottom: HEIGHT * 0.02}}
-          data={Sccategories}
-          renderItem={({item}) => (
-            <TabList
-              item={item}
-              SccurrentCat={SccurrentCat}
-              ScchangeTab={ScchangeTab}
-            />
-          )}
-        />
-        <Loop
-          style={{marginVertical: HEIGHT * 0.03}}
-          data={SctabProducts}
-          renderItem={({item}) => (
-            <ScVerticalTile
-              item={item}
-              ScGoToSingleProduct={ScGoToSingleProduct}
-              ScFavs={props.ScFavs}
-              ScremoveFav={(Sc) => props.ScremoveFavAction(Sc)}
-              ScsetFav={(Sc) => props.ScsetFavAction(Sc)}
-            />
-          )}
-        />
-        <Text
-          style={{
-            fontWeight: 'bold',
-            fontSize: 24,
-            marginLeft: H_W.width * 0.06,
-            marginTop: HEIGHT * 0.01,
-          }}>
-          Popular Bags
-        </Text>
-        <Loop
-          style={{marginTop: HEIGHT * 0.03}}
-          data={popularProducts}
-          renderItem={({item}) => (
-            <ScVerticalTile
-              item={item}
-              ScGoToSingleProduct={ScGoToSingleProduct}
-              ScFavs={props.ScFavs}
-              ScremoveFav={(Sc) => props.ScremoveFavAction(Sc)}
-              ScsetFav={(Sc) => props.ScsetFavAction(Sc)}
-            />
-          )}
-        />
-      </ScrollView>
+          </ScrollView>
+        }
+        horizontal={false}
+        data={ScTabProducts}
+        renderItem={({item}) => (
+          <ScHorizontalTile
+            item={item}
+            ScFavs={props.ScFavs}
+            ScGoToSingleProduct={ScGoToSingleProduct}
+            ScsetFav={(sc) => props.ScsetFavAction(sc)}
+            ScremoveFav={(sc) => props.ScremoveFavAction(sc)}
+          />
+        )}
+      />
     </WrapperScreen>
   );
 }
@@ -194,118 +275,281 @@ export const ScVerticalTile = ({
   return (
     <TouchableOpacity
       onPress={() => ScGoToSingleProduct(item)}
-      style={{
-        width: H_W.width * 0.55,
-        paddingHorizontal: H_W.width * 0.03,
-        paddingTop: H_W.width * 0.03,
-        paddingBottom: H_W.width * 0.06,
-        borderRadius: 19,
-        backgroundColor: item.bgcolor,
-        marginHorizontal: H_W.width * 0.05,
-        position: 'relative',
-        shadowColor: '#000',
-        shadowOffset: {
-          width: 0,
-          height: 4,
-        },
-        shadowOpacity: 0.2,
-        shadowRadius: 18.65,
-      }}>
-      <View
-        style={{
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexDirection: 'row',
-        }}>
-        <View>
-          <Text style={{color: 'black', fontSize: 18}}>
-            {item.product.split(' ')[0]}
-          </Text>
+      style={{marginHorizontal: H_W.width * 0.05}}>
+      <LinearGradient
+        style={{width: H_W.width * 0.48, padding: 2, borderRadius: 20}}
+        colors={['white', colors.lightGrey1]}
+        start={{x: 0, y: 0}}
+        end={{x: 1, y: 1}}>
+        <LinearGradient
+          colors={['white', colors.lightBackground]}
+          start={{x: 0, y: 1}}
+          end={{x: 1, y: 0}}
+          locations={[0.7, 1]}
+          style={{
+            backgroundColor: 'white',
+            borderRadius: 20,
+            paddingHorizontal: H_W.width * 0.02,
+            paddingVertical: HEIGHT * 0.02,
+          }}>
           <Text
             style={{
-              color: 'black',
               fontWeight: 'bold',
-              fontSize: 18,
+              fontSize: 19,
+              fontStyle: 'italic',
+              color: colors.darkGray,
             }}>
-            {item.product.split(' ')[1]}
+            ${item.price}
           </Text>
-        </View>
-        <Text style={{color: 'black', fontWeight: 'bold', fontSize: 18}}>
-          ${item.price}
-        </Text>
-      </View>
-      <FastImage
-        source={item.image}
-        style={{
-          width: '100%',
-          height: HEIGHT * 0.3,
-          marginLeft: H_W.width * 0.15,
-          marginBottom: HEIGHT * 0.015,
-        }}
-        resizeMode="contain"
-      />
+          <FastImage
+            source={item.images}
+            style={{
+              width: '100%',
+              height: HEIGHT * 0.2,
+              shadowColor: '#000',
+              shadowOffset: {
+                width: 0,
+                height: 10,
+              },
+              shadowOpacity: 0.1,
+              shadowRadius: 15.46,
+              transform: [{rotate: '-25deg'}],
+            }}
+            resizeMode="contain"
+          />
+          <Text
+            numberOfLines={2}
+            style={{
+              width: '95%',
+              fontFamily: 'PingFangHK-Semibold',
+              fontSize: 15.5,
+              marginTop: HEIGHT * 0.01,
+            }}>
+            {item.name}
+          </Text>
+          <View
+            style={{
+              marginTop: HEIGHT * 0.008,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flex: 1,
+            }}>
+            <TouchableOpacity onPress={toggleFav}>
+              <AntDesign
+                name="heart"
+                size={18}
+                color={fav ? colors.primary : colors.lightGrey3}
+              />
+            </TouchableOpacity>
+            <LinearGradient
+              colors={[colors.primary, `rgba(${colors.rgb_Primary},0.7)`]}
+              end={{x: 1, y: 0}}
+              start={{x: 0, y: 1}}
+              style={{padding: 7, borderRadius: 7}}>
+              <Entypo name="chevron-right" size={14} color="white" />
+            </LinearGradient>
+          </View>
+        </LinearGradient>
+      </LinearGradient>
+    </TouchableOpacity>
+  );
+};
+
+export const ScHorizontalTile = ({
+  item,
+  ScGoToSingleProduct,
+  ScremoveFav,
+  ScsetFav,
+  ScFavs,
+}) => {
+  useEffect(() => {
+    checkIfFav();
+  }, []);
+  const [fav, setFav] = useState(false);
+  const insets = useSafeAreaInsets();
+  const HEIGHT = H_W.height - (insets.bottom + insets.top);
+
+  const checkIfFav = () => {
+    for (let Sc = 0; Sc < ScFavs.length; Sc++) {
+      if (ScFavs[Sc].id === item.id) {
+        setFav(true);
+        break;
+      }
+    }
+  };
+  const toggleFav = () => {
+    fav ? ScremoveFav(item.id) : ScsetFav(item);
+    setFav(!fav);
+  };
+  return (
+    <TouchableOpacity
+      onPress={() => ScGoToSingleProduct(item)}
+      style={{alignItems: 'center', justifyContent: 'center', marginTop: 20}}>
       <View
         style={{
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-between',
-          position: 'absolute',
-          width: '100%',
-          bottom: 0,
-          right: 0,
+          width: H_W.width * 0.9,
         }}>
-        <TouchableOpacity onPress={toggleFav}>
-          <AntDesign name={fav ? 'heart' : 'hearto'} color="white" size={20} />
-        </TouchableOpacity>
         <View
           style={{
             backgroundColor: 'white',
-            borderBottomRightRadius: 19,
-            borderTopLeftRadius: 19,
-            paddingVertical: HEIGHT * 0.007,
-            width: '30%',
-            alignItems: 'center',
-            justifyContent: 'center',
+            width: H_W.width * 0.25,
+            height: H_W.width * 0.25,
+            borderRadius: 13,
+            padding: 2,
+            shadowColor: '#000',
+            shadowOffset: {
+              width: 5,
+              height: 8,
+            },
+            shadowOpacity: 0.26,
+            shadowRadius: 10.68,
           }}>
-          <Entypo name="plus" size={23} color={colors.primary} />
+          <LinearGradient
+            colors={['white', colors.lightBackground]}
+            style={{borderRadius: 13, width: '100%', height: '100%'}}
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 0}}>
+            <FastImage
+              source={item.images}
+              style={{
+                width: '90%',
+                height: H_W.width * 0.19,
+                shadowColor: '#000',
+                shadowOffset: {
+                  width: 0,
+                  height: 3,
+                },
+                shadowOpacity: 0.27,
+                shadowRadius: 4.65,
+                transform: [{rotate: '-13deg'}],
+              }}
+              resizeMode="contain"
+            />
+          </LinearGradient>
+        </View>
+        <View
+          style={{
+            width: H_W.width * 0.6,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}>
+          <View>
+            <Text
+              numberOfLines={2}
+              style={{
+                color: 'black',
+                width: H_W.width * 0.45,
+                fontSize: 15.5,
+              }}>
+              {item.name}
+            </Text>
+            <View
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexDirection: 'row',
+                alignSelf: 'flex-start',
+                marginTop: HEIGHT * 0.015,
+              }}>
+              <Text
+                style={{
+                  color: 'black',
+                  fontWeight: 'bold',
+                  fontSize: 18.5,
+                  fontStyle: 'italic',
+                }}>
+                ${item.price}
+              </Text>
+            </View>
+          </View>
+          <TouchableOpacity onPress={toggleFav}>
+            <MaskedViewIOS
+              maskElement={
+                <AntDesign
+                  name="heart"
+                  size={H_W.width * 0.07}
+                  style={{
+                    shadowColor: '#000',
+                    shadowOffset: {
+                      width: 0,
+                      height: 8,
+                    },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 10.32,
+                  }}
+                />
+              }>
+              <LinearGradient
+                colors={
+                  fav
+                    ? [colors.primary, `rgba(${colors.rgb_Primary}, 0.4)`]
+                    : [colors.lightGrey3, colors.lightGrey2]
+                }
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 1}}>
+                <AntDesign
+                  name="heart"
+                  size={H_W.width * 0.07}
+                  style={{
+                    opacity: 0,
+                    shadowColor: '#000',
+                    shadowOffset: {
+                      width: 0,
+                      height: 8,
+                    },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 10.32,
+                  }}
+                />
+              </LinearGradient>
+            </MaskedViewIOS>
+          </TouchableOpacity>
         </View>
       </View>
     </TouchableOpacity>
   );
 };
 
-export const TabList = ({item, ScchangeTab, SccurrentCat}) => {
+export const TabList = ({item, ScchangeTab, ScCurrentCat}) => {
   const insets = useSafeAreaInsets();
   const HEIGHT = H_W.height - (insets.bottom + insets.top);
   return (
     <TouchableOpacity
-      onPress={() => ScchangeTab(item)}
       style={{
-        paddingHorizontal: H_W.width * 0.06,
-        paddingVertical: HEIGHT * 0.009,
-        borderRadius: 50,
-        backgroundColor:
-          SccurrentCat.id === item.id ? colors.primary : colors.lightBackground,
-        marginHorizontal: H_W.width * 0.02,
-        shadowColor:
-          SccurrentCat.id === item.id
-            ? `rgba(${colors.rgb_Primary},1)`
-            : '#000',
-        shadowOffset: {
-          width: 0,
-          height: SccurrentCat.id === item.id ? 10 : 3,
-        },
-        shadowOpacity: SccurrentCat.id === item.id ? 0.47 : 0.27,
-        shadowRadius: SccurrentCat.id === item.id ? 10.65 : 4.65,
-      }}>
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        margin: 15,
+        marginTop: HEIGHT * 0.04,
+        height: H_W.width * 0.1, //1%
+        paddingHorizontal: H_W.width * 0.02,
+        paddingTop: H_W.width * 0.02,
+      }}
+      onPress={() => ScchangeTab(item)}>
       <Text
         style={{
-          fontSize: 15.5,
-          color: SccurrentCat.id === item.id ? 'white' : colors.lightGrey3,
-          fontWeight: 'bold',
+          color: item.id === ScCurrentCat.id ? 'black' : colors.lightGrey3,
+          fontSize: 18,
+          fontFamily: 'Arial',
         }}>
         {item.category}
       </Text>
+      {item.id === ScCurrentCat.id ? (
+        <View
+          style={{
+            width: 8,
+            borderWidth: 1.8,
+            borderRadius: 10,
+            marginTop: 4,
+            borderColor: colors.primary,
+          }}
+        />
+      ) : null}
     </TouchableOpacity>
   );
 };
